@@ -3,6 +3,7 @@ package com.mle.scalajs
 import org.scalajs.dom
 import org.scalajs.dom.{CanvasRenderingContext2D, HTMLCanvasElement}
 
+import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
 
 @JSExport
@@ -13,11 +14,37 @@ object ScalaJSExample {
     canvas.width = canvas.parentElement.clientWidth
     canvas.height = canvas.parentElement.clientHeight
 
-    paint(canvas, renderer)
+    //    paint(canvas, renderer)
+    clock(canvas, renderer)
   }
 
   def clock(canvas: HTMLCanvasElement, renderer: CanvasRenderingContext2D) = {
     val gradient = renderer.createLinearGradient(canvas.width / 2 - 100, 0, canvas.width / 2 + 100, 0)
+    gradient.addColorStop(0, "red")
+    gradient.addColorStop(0.5, "green")
+    gradient.addColorStop(1, "blue")
+    renderer.fillStyle = gradient
+    renderer.textAlign = "center"
+    renderer.textBaseline = "middle"
+
+    def render() = {
+      val date = new js.Date()
+      renderer.clearRect(0, 0, canvas.width, canvas.height)
+
+      renderer.font = "75px sans-serif"
+      val secs = date.getSeconds()
+      val secString = if (secs >= 10) secs else s"0$secs"
+      renderer.fillText(
+        Seq(
+          date.getHours(),
+          date.getMinutes(),
+          secString
+        ).mkString(":"),
+        x = canvas.width / 2,
+        y = canvas.height / 2
+      )
+    }
+    dom.setInterval(render _, 1000)
   }
 
   def paint(canvas: HTMLCanvasElement, renderer: CanvasRenderingContext2D) = {
