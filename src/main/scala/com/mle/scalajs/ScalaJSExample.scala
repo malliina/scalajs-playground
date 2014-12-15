@@ -1,10 +1,10 @@
 package com.mle.scalajs
 
-import org.scalajs.dom
 import org.scalajs.dom.{CanvasRenderingContext2D, HTMLCanvasElement}
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
+import org.scalajs.dom
 
 @JSExport
 object ScalaJSExample {
@@ -15,7 +15,12 @@ object ScalaJSExample {
     canvas.height = canvas.parentElement.clientHeight
 
     //    paint(canvas, renderer)
-    clock(canvas, renderer)
+    //    clock(canvas, renderer)
+    flappyBird(canvas, renderer)
+  }
+
+  def flappyBird(canvas: HTMLCanvasElement, renderer: CanvasRenderingContext2D) = {
+    new FlappyBird(canvas, renderer)
   }
 
   def clock(canvas: HTMLCanvasElement, renderer: CanvasRenderingContext2D) = {

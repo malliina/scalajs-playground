@@ -16,9 +16,10 @@ object TemplateBuild extends Build {
     version := "0.0.1",
     scalaVersion := "2.11.4",
     libraryDependencies ++= Seq(
-      "org.scala-lang.modules.scalajs" %%% "scalajs-dom" % "0.6"
+      "org.scala-lang.modules.scalajs" %%% "scalajs-dom" % "0.6",
+      "com.scalatags" %%% "scalatags" % "0.4.2"
     ),
-    bootSnippet := "ScalaJSExample().main(document.getElementById('canvas'));",
+    bootSnippet := "MyExample().main(document.getElementById('myDiv'));",
     updateBrowsers <<= updateBrowsers.triggeredBy(ScalaJSKeys.fastOptJS in Compile)
   )
 }
