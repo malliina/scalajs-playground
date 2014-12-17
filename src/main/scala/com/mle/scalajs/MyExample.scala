@@ -1,9 +1,11 @@
 package com.mle.scalajs
 
+import com.mle.scalajs.WeatherSearch.{WeatherResult, celsius}
 import org.scalajs.dom.extensions.Ajax
-import org.scalajs.dom.{Event, HTMLDivElement, XMLHttpRequest}
+import org.scalajs.dom.{Event, HTMLDivElement, Node, XMLHttpRequest}
 
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.runNow
+import scala.scalajs.js.JSON
 import scala.scalajs.js.annotation.JSExport
 import scalatags.JsDom.all._
 
@@ -14,13 +16,50 @@ import scalatags.JsDom.all._
 object MyExample {
   @JSExport
   def main(divElem: HTMLDivElement): Unit = {
-    webFuture(divElem)
+    WeatherSearch(divElem)
+    //    webFuture2(divElem)
   }
 
-  def webFuture(divElem: HTMLDivElement) = {
-    val url = "http://api.openweathermap.org/data/2.5/weather?q=Innsbruck"
-    Ajax.get(url).foreach(req => divElem.appendChild(pre(req.responseText).render))
+  def webFuture(divElem: HTMLDivElement) = withResponse(divElem)(str => {
+    WeatherSearch.toElem(WeatherSearch.result2(str))
+  })
+
+  def webFutureRaw(divElem: HTMLDivElement) = withResponse(divElem)(str => {
+    val json = JSON.parse(str)
+    val pretty = JSON.stringify(json, space = 4)
+    pre(pretty).render
+  })
+
+  def withResponse(divElem: HTMLDivElement)(f: String => Node) = {
+    withResponseAction(divElem)(str => divElem.appendChild(f(str)))
   }
+
+  def withResponseAction(divElem: HTMLDivElement)(f: String => Unit) = {
+    val city = "Innsbruck"
+    val url = s"http://api.openweathermap.org/data/2.5/weather?q=$city"
+    Ajax.get(url).foreach(resp => {
+      if (resp.status == 200) {
+        f(resp.responseText)
+      }
+    })
+  }
+
+  /**
+   * Won't work, can't just use play-json compiled for the JVM.
+   *
+   * @param divElem
+   */
+  def webFuturePlayJson(divElem: HTMLDivElement) = withResponse(divElem)(str => {
+    val err = div("JSON error")
+    WeatherParser.parse(str).fold(err.render)(wr => {
+      div(
+        b("Weather: "),
+        ul(
+          li(b("Country: "), wr.name)
+        )
+      ).render
+    })
+  })
 
   def web(divElem: HTMLDivElement) = {
     val xhr = new XMLHttpRequest()

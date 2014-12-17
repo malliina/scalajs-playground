@@ -17,7 +17,8 @@ object TemplateBuild extends Build {
     scalaVersion := "2.11.4",
     libraryDependencies ++= Seq(
       "org.scala-lang.modules.scalajs" %%% "scalajs-dom" % "0.6",
-      "com.scalatags" %%% "scalatags" % "0.4.2"
+      "com.scalatags" %%% "scalatags" % "0.4.2",
+      "com.typesafe.play" %% "play-json" % "2.3.6"
     ),
     bootSnippet := "MyExample().main(document.getElementById('myDiv'));",
     updateBrowsers <<= updateBrowsers.triggeredBy(ScalaJSKeys.fastOptJS in Compile)
