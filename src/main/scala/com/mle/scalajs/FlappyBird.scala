@@ -1,13 +1,12 @@
 package com.mle.scalajs
 
 import org.scalajs.dom
-import org.scalajs.dom.{CanvasRenderingContext2D, HTMLCanvasElement}
-
+import org.scalajs.dom.CanvasRenderingContext2D
+import org.scalajs.dom.raw.HTMLCanvasElement
+import scala.scalajs.js.timers
 import scala.util.Random
+import concurrent.duration.DurationInt
 
-/**
- * @author Michael
- */
 class FlappyBird(canvas: HTMLCanvasElement, renderer: CanvasRenderingContext2D) {
   canvas.height = 400
   renderer.font = "50px sans-serif"
@@ -32,7 +31,7 @@ class FlappyBird(canvas: HTMLCanvasElement, renderer: CanvasRenderingContext2D) 
   // The X position of the obstacle is calculated by its position in the queue and in the current frame.
   val obstacles = collection.mutable.Queue.empty[Int]
 
-  dom.setInterval(run _, 20)
+  timers.setInterval(20.millis.toMillis)(run())
 
   canvas.onclick = (e: dom.MouseEvent) => {
     playerV -= 5

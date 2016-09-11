@@ -2,9 +2,6 @@ package com.mle.scalajs
 
 import play.api.libs.json.Json
 
-/**
- * @author Michael
- */
 object WeatherParser {
 
   case class MainWeather(temp: Double, humidity: Int, temp_min: Double, temp_max: Double)

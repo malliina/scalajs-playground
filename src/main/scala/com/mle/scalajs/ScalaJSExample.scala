@@ -1,10 +1,12 @@
 package com.mle.scalajs
 
-import org.scalajs.dom.{CanvasRenderingContext2D, HTMLCanvasElement}
+import org.scalajs.dom.CanvasRenderingContext2D
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
 import org.scalajs.dom
+import org.scalajs.dom.raw.HTMLCanvasElement
+import scala.scalajs.js.timers
 
 @JSExport
 object ScalaJSExample {
@@ -49,7 +51,7 @@ object ScalaJSExample {
         y = canvas.height / 2
       )
     }
-    dom.setInterval(render _, 1000)
+    timers.setInterval(1000)(render())
   }
 
   def paint(canvas: HTMLCanvasElement, renderer: CanvasRenderingContext2D) = {

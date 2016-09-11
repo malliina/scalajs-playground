@@ -1,8 +1,9 @@
 package com.mle.scalajs
 
 import com.mle.scalajs.WeatherSearch.{CityNotFound, ErrorMessage, GenericError, WeatherResult}
-import org.scalajs.dom.extensions.Ajax
-import org.scalajs.dom.{Event, HTMLDivElement}
+import org.scalajs.dom.Event
+import org.scalajs.dom.ext.Ajax
+import org.scalajs.dom.raw.HTMLDivElement
 
 import scala.concurrent.Future
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.runNow
@@ -11,9 +12,6 @@ import scala.scalajs.js.JSON
 import scala.util.{Failure, Success, Try}
 import scalatags.JsDom.all._
 
-/**
- * @author Michael
- */
 case class WeatherSearch(divElem: HTMLDivElement) {
   lazy val box = input(
     `type` := "text",
@@ -54,7 +52,9 @@ case class WeatherSearch(divElem: HTMLDivElement) {
 
   def run[E, T](city: String)(f: String => Either[E, T]): Future[Either[E, T]] = {
     val url = s"http://api.openweathermap.org/data/2.5/weather?q=$city"
-    Ajax.get(url).filter(r => r.status == 200 && city == box.value).map(r => f(r.responseText))
+    Ajax.get(url)
+      .filter(r => r.status == 200 && city == box.value)
+      .map(r => f(r.responseText))
   }
 
   def flatten[T](f: Future[Try[T]]): Future[T] = f.flatMap {
@@ -67,12 +67,9 @@ case class WeatherSearch(divElem: HTMLDivElement) {
     val json = JSON.parse(body)
     val code = json.cod.toString.toInt
     code match {
-      case 200 =>
-        Right(WeatherSearch.result(json))
-      case 404 =>
-        Left(CityNotFound)
-      case other =>
-        Left(GenericError(s"Error $other"))
+      case 200 => Right(WeatherSearch.result(json))
+      case 404 => Left(CityNotFound)
+      case other => Left(GenericError(s"Error $other"))
     }
   }
 }
@@ -113,7 +110,10 @@ object WeatherSearch {
 
   def celsius(kelvins: js.Dynamic) = (kelvins.asInstanceOf[Double] - 273.15).toInt
 
-  case class WeatherResult(city: String, weather: String, tempMin: Int, tempMax: Int, humidity: Int)
+  case class WeatherResult(city: String,
+                           weather: String,
+                           tempMin: Int,
+                           tempMax: Int,
+                           humidity: Int)
 
 }
-
